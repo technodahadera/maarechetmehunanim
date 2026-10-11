@@ -1,66 +1,114 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=3840, initial-scale=1.0" />
-<title>מערכת הקרנה - מחוננים יום ראשון</title>
-<style>
-@font-face {
-  font-family: "NotoHebrew";
-  src: local("Noto Sans Hebrew"), local("NotoSansHebrew-Regular");
-}
-:root{
-  --bg:#fbf8fd;
-  --panel:#ffffff;
-  --panel-soft:#f7f1fb;
-  --panel-break:#efe7f6;
-  --panel-social:#f2ebf9;
-  --border:#e5d9ef;
-  --purple:#8f3aa2;
-  --purple-dark:#6f257d;
-  --ink:#3b3140;
-  --muted:#6c6572;
-  --shadow:0 10px 30px rgba(120, 60, 140, 0.10);
-}
-*{box-sizing:border-box}
-html,body{margin:0; padding:0; width:3840px; height:2160px; background:var(--bg); font-family:"NotoHebrew","DejaVu Sans",sans-serif;}
-body{direction:rtl;}
-.page{width:3840px; height:2160px; padding:54px 58px; display:flex; flex-direction:column; gap:22px;}
-.header{background:linear-gradient(180deg,#f6effa 0%,#fbf8fd 100%); border:2px solid var(--border); border-radius:34px; padding:28px 38px 18px; box-shadow:var(--shadow);}
-.title{font-size:70px; line-height:1.15; color:var(--purple-dark); font-weight:900; text-align:center; margin-bottom:12px;}
-.subtitle{font-size:31px; line-height:1.3; color:#8c7f95; text-align:center; font-weight:700;}
-.table{width:100%; border-collapse:separate; border-spacing:14px 14px; table-layout:fixed; flex:1;}
-.table th{background:#f2e9f6; color:var(--purple-dark); font-size:35px; font-weight:900; padding:18px 10px; border-radius:22px; border:2px solid var(--border);}
-.table th.time{width:280px;}
-.card{background:var(--panel); border:2px solid var(--border); border-radius:26px; text-align:center; vertical-align:middle; box-shadow:var(--shadow); padding:18px 14px;}
-.period .card{height:210px;}
-.course{font-size:47px; line-height:1.14; color:var(--purple-dark); font-weight:900; margin-bottom:14px;}
-.teacher{font-size:34px; line-height:1.18; color:var(--ink); font-weight:700; margin-bottom:10px;}
-.room{font-size:29px; line-height:1.2; color:var(--muted); font-weight:700;}
-.timeCard{background:#f7f3f8; border:2px solid var(--border); border-radius:26px; text-align:center; vertical-align:middle; color:var(--purple-dark); font-weight:900; font-size:36px; line-height:1.25; box-shadow:var(--shadow);}
-.socialRow .timeCard{height:132px;}
-.period .timeCard{height:210px;}
-.breakRow .timeCard{height:92px; font-size:30px;}
-.socialCell{background:var(--panel-social); color:var(--purple); font-weight:900; font-size:42px; border:2px solid var(--border); border-radius:26px; text-align:center; box-shadow:var(--shadow);}
-.breakCell{background:var(--panel-break); color:var(--purple); font-weight:900; font-size:40px; border:2px solid var(--border); border-radius:24px; text-align:center; box-shadow:var(--shadow);}
-.footer{display:flex; justify-content:space-between; align-items:center; gap:20px; padding:8px 8px 0; color:#8a7b92; font-size:25px; font-weight:700;}
-.brand{color:var(--purple-dark); font-size:30px; font-weight:900;}
-.note{font-size:23px;}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>מערכת שעות מחוננים | טכנודע</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #3e3045;
+      --purple: #852f91;
+      --purple-strong: #6c2677;
+      --border: #e6ddec;
+      --soft: #f4ebf7;
+      --gap: clamp(3px, .48vw, 12px);
+      --page-pad: clamp(4px, .75vw, 18px);
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      width: 100%; height: 100%; min-width: 0; min-height: 0; margin: 0;
+      overflow: hidden; background: #faf7fb; direction: rtl;
+      font-family: Rubik, Arial, "Noto Sans Hebrew", sans-serif;
+    }
+    .app {
+      display: grid;
+      grid-template-rows: minmax(0, 8.5%) minmax(0, 1fr);
+      width: 100vw; height: 100vh; height: 100dvh;
+      padding: var(--page-pad); gap: var(--gap); overflow: hidden;
+    }
+    header {
+      display: flex; align-items: center; justify-content: center;
+      min-height: 0; padding: 0 6px; background: #f2eaf7;
+      border: 1px solid #e5d6eb; border-radius: clamp(5px, .8vw, 18px);
+      color: var(--purple-strong); text-align: center;
+    }
+    h1 {
+      margin: 0; font-size: clamp(11px, min(1.8vw, 3.8vh), 39px);
+      font-weight: 800; line-height: 1.15;
+    }
+    .timetable {
+      display: grid;
+      grid-template-columns: minmax(0, 9.5fr) repeat(8, minmax(0, 10fr));
+      grid-template-rows: .86fr .58fr 2.25fr .5fr 2.25fr .5fr 2.25fr .5fr 2.25fr;
+      gap: var(--gap);
+      width: 100%; height: 100%; min-width: 0; min-height: 0;
+      overflow: hidden;
+    }
+    .cell {
+      min-width: 0; min-height: 0;
+      display: flex; justify-content: center; align-items: center;
+      text-align: center; overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: clamp(4px, .72vw, 18px);
+    }
+    .label {
+      background: #eaddef; color: var(--purple-strong);
+      font-weight: 800; font-size: clamp(10px, min(1.55vw, 3.2vh), 32px);
+    }
+    .hour {
+      background: #f5f0f7; color: var(--purple-strong);
+      font-size: clamp(9px, min(1.08vw, 2.45vh), 24px);
+      font-weight: 800; white-space: nowrap;
+      font-variant-numeric: tabular-nums; direction: ltr; unicode-bidi: isolate;
+      letter-spacing: -.015em;
+    }
+    .across { grid-column: span 8; font-weight: 800; color: var(--purple); }
+    .social { background: #f0e8f4; font-size: clamp(10px, min(1.42vw, 2.9vh), 32px); }
+    .recess { background: #eae1f0; font-size: clamp(10px, min(1.35vw, 2.8vh), 30px); }
+    .lesson {
+      display: flex; flex-direction: column; justify-content: center;
+      gap: clamp(1px, .33vh, 7px);
+      padding: clamp(2px, .38vw, 11px) clamp(1px, .28vw, 8px);
+      background: white;
+      box-shadow: 0 1px 2px rgba(71,36,79,.07);
+      line-height: 1.13;
+    }
+    .course, .teacher, .location {
+      display: block; min-width: 0; max-width: 100%;
+      overflow-wrap: anywhere; word-break: normal;
+      text-wrap: balance;
+    }
+    .course {
+      font-size: clamp(9px, min(1.25vw, 2.65vh), 31px);
+      color: var(--purple-strong); font-weight: 800;
+    }
+    .teacher {
+      font-size: clamp(8px, min(.97vw, 2.08vh), 24px);
+      color: var(--ink); font-weight: 700;
+    }
+    .location {
+      font-size: clamp(8px, min(.88vw, 1.85vh), 22px);
+      color: #62576a; font-weight: 500;
+    }
+    @media (max-aspect-ratio: 5/4) {
+      h1 { font-size: clamp(10px, min(1.5vw, 3vh), 32px); }
+      .timetable { grid-template-columns: minmax(0, 8fr) repeat(8, minmax(0, 10fr)); }
+      .course { font-size: clamp(8px, min(1.25vw, 2.2vh), 31px); }
+      .teacher { font-size: clamp(8px, min(.98vw, 1.8vh), 24px); }
+      .location { font-size: clamp(7px, min(.88vw, 1.65vh), 22px); }
+    }
+  </style>
 </head>
 <body>
-  <div class="page">
-    <div class="header">
-      <div class="title">מערכת מחוננים יום ראשון - כיתות ה׳ - תשפ״ז - סמסטר א׳</div>
-      <div class="subtitle">גרסת הקרנה למסך גדול · טקסט מוגדל · מתאימה להטמעה ב‑Genially</div>
-    </div>
-    <table class="table" aria-label="מערכת שעות">
-      <tr><th class="time">שעות</th><th>ה׳1</th><th>ה׳2</th><th>ה׳3</th><th>ה׳4</th><th>ה׳5</th><th>ה׳6</th><th>ה׳7</th><th>ה׳8</th></tr><tr class="socialRow"><td class="timeCard">08:30–08:45</td><td colspan="8" class="socialCell">פעילות חברתית - זמן מחנך</td></tr><tr class="period"><td class="timeCard">08:45–09:45</td><td class="card"><div class="course">אמנויות הבמה</div><div class="teacher">חפץ שושי</div><div class="room">אודיטוריום</div></td><td class="card"><div class="course">פיתוח משחקים</div><div class="teacher">אריה סנה</div><div class="room">מחשבים חדר 2</div></td><td class="card"><div class="course">רובוטיקה מיקרוביט</div><div class="teacher">איציק חיים</div><div class="room">חדר טכנולוגיה</div></td><td class="card"><div class="course">יצירתיות פלוס</div><div class="teacher">טללית קונפורטי</div><div class="room">חדר אלקטרוניקה</div></td><td class="card"><div class="course">בינה מלאכותית</div><div class="teacher">קרן אולאברי</div><div class="room">חדר מחשבים 1</div></td><td class="card"><div class="course">בלשי ביולוגיה</div><div class="teacher">לינוי יעקב</div><div class="room">מעבדה 6</div></td><td class="card"><div class="course">רוקחים כימיה</div><div class="teacher">ענת אספורטס</div><div class="room">מעבדה 5</div></td><td class="card"><div class="course">רפואה בפעולה</div><div class="teacher">נתי מנצור</div><div class="room">מעבדה 2</div></td></tr><tr class="breakRow"><td class="timeCard">09:45–10:05</td><td colspan="8" class="breakCell">הפסקה</td></tr><tr class="period"><td class="timeCard">10:05–11:05</td><td class="card"><div class="course">יצירתיות פלוס</div><div class="teacher">טללית קונפורטי</div><div class="room">חדר אלקטרוניקה</div></td><td class="card"><div class="course">אמנויות הבמה</div><div class="teacher">חפץ שושי</div><div class="room">אודיטוריום</div></td><td class="card"><div class="course">פיתוח משחקים</div><div class="teacher">אריה סנה</div><div class="room">מחשבים חדר 2</div></td><td class="card"><div class="course">רובוטיקה מיקרוביט</div><div class="teacher">איציק חיים</div><div class="room">חדר טכנולוגיה</div></td><td class="card"><div class="course">רפואה בפעולה</div><div class="teacher">נתי מנצור</div><div class="room">מעבדה 2</div></td><td class="card"><div class="course">בינה מלאכותית</div><div class="teacher">קרן אולאברי</div><div class="room">חדר מחשבים 1</div></td><td class="card"><div class="course">בלשי ביולוגיה</div><div class="teacher">לינוי יעקב</div><div class="room">מעבדה 6</div></td><td class="card"><div class="course">רוקחים כימיה</div><div class="teacher">ענת אספורטס</div><div class="room">מעבדה 5</div></td></tr><tr class="breakRow"><td class="timeCard">11:05–11:15</td><td colspan="8" class="breakCell">הפסקה</td></tr><tr class="period"><td class="timeCard">11:15–12:15</td><td class="card"><div class="course">רובוטיקה מיקרוביט</div><div class="teacher">איציק חיים</div><div class="room">חדר טכנולוגיה</div></td><td class="card"><div class="course">יצירתיות פלוס</div><div class="teacher">טללית קונפורטי</div><div class="room">חדר אלקטרוניקה</div></td><td class="card"><div class="course">אמנויות הבמה</div><div class="teacher">חפץ שושי</div><div class="room">אודיטוריום</div></td><td class="card"><div class="course">פיתוח משחקים</div><div class="teacher">אריה סנה</div><div class="room">מחשבים חדר 2</div></td><td class="card"><div class="course">רוקחים כימיה</div><div class="teacher">ענת אספורטס</div><div class="room">מעבדה 5</div></td><td class="card"><div class="course">רפואה בפעולה</div><div class="teacher">נתי מנצור</div><div class="room">מעבדה 2</div></td><td class="card"><div class="course">בינה מלאכותית</div><div class="teacher">קרן אולאברי</div><div class="room">חדר מחשבים 1</div></td><td class="card"><div class="course">בלשי ביולוגיה</div><div class="teacher">לינוי יעקב</div><div class="room">מעבדה 6</div></td></tr><tr class="breakRow"><td class="timeCard">12:15–12:25</td><td colspan="8" class="breakCell">הפסקה</td></tr><tr class="period"><td class="timeCard">12:25–13:30</td><td class="card"><div class="course">פיתוח משחקים</div><div class="teacher">אריה סנה</div><div class="room">מחשבים חדר 2</div></td><td class="card"><div class="course">רובוטיקה מיקרוביט</div><div class="teacher">איציק חיים</div><div class="room">חדר טכנולוגיה</div></td><td class="card"><div class="course">יצירתיות פלוס</div><div class="teacher">טללית קונפורטי</div><div class="room">חדר אלקטרוניקה</div></td><td class="card"><div class="course">אמנויות הבמה</div><div class="teacher">חפץ שושי</div><div class="room">אודיטוריום</div></td><td class="card"><div class="course">בלשי ביולוגיה</div><div class="teacher">לינוי יעקב</div><div class="room">מעבדה 6</div></td><td class="card"><div class="course">רוקחים כימיה</div><div class="teacher">ענת אספורטס</div><div class="room">מעבדה 5</div></td><td class="card"><div class="course">רפואה בפעולה</div><div class="teacher">נתי מנצור</div><div class="room">מעבדה 2</div></td><td class="card"><div class="course">בינה מלאכותית</div><div class="teacher">קרן אולאברי</div><div class="room">חדר מחשבים 1</div></td></tr>
-    </table>
-    <div class="footer">
-      <div class="brand">טכנודע</div>
-      <div class="note">מומלץ להעלות את קובץ ה‑PNG או להטמיע את קובץ ה‑HTML/אתר, במקום להדביק טבלת אקסל ישירות.</div>
-    </div>
-  </div>
+  <main class="app">
+    <header><h1>מערכת מחוננים יום ראשון - כיתות ה׳ - תשפ״ז - סמסטר א׳</h1></header>
+    <section class="timetable" aria-label="מערכת שעות ליום ראשון">
+      <div class="cell label hours-head">שעות</div><div class="cell label class-head" >ה׳1</div><div class="cell label class-head" >ה׳2</div><div class="cell label class-head" >ה׳3</div><div class="cell label class-head" >ה׳4</div><div class="cell label class-head" >ה׳5</div><div class="cell label class-head" >ה׳6</div><div class="cell label class-head" >ה׳7</div><div class="cell label class-head" >ה׳8</div><div class="cell hour social-time" >08:30–08:45</div><div class="cell across social" >פעילות חברתית - זמן מחנך</div><div class="cell hour lesson-time" >08:45–09:45</div><div class="cell lesson"><div class="course">אמנויות הבמה</div><div class="teacher">חפץ שושי</div><div class="location">אודיטוריום</div></div><div class="cell lesson"><div class="course">פיתוח משחקים</div><div class="teacher">אריה סנה</div><div class="location">מחשבים חדר 2</div></div><div class="cell lesson"><div class="course">רובוטיקה מיקרוביט</div><div class="teacher">איציק חיים</div><div class="location">חדר טכנולוגיה</div></div><div class="cell lesson"><div class="course">יצירתיות פלוס</div><div class="teacher">טללית קונפורטי</div><div class="location">חדר אלקטרוניקה</div></div><div class="cell lesson"><div class="course">בינה מלאכותית</div><div class="teacher">קרן אולאברי</div><div class="location">חדר מחשבים 1</div></div><div class="cell lesson"><div class="course">בלשי ביולוגיה</div><div class="teacher">לינוי יעקב</div><div class="location">מעבדה 6</div></div><div class="cell lesson"><div class="course">רוקחים כימיה</div><div class="teacher">ענת אספורטס</div><div class="location">מעבדה 5</div></div><div class="cell lesson"><div class="course">רפואה בפעולה</div><div class="teacher">נתי מנצור</div><div class="location">מעבדה 2</div></div><div class="cell hour recess-time" >09:45–10:05</div><div class="cell across recess" >הפסקה</div><div class="cell hour lesson-time" >10:05–11:05</div><div class="cell lesson"><div class="course">יצירתיות פלוס</div><div class="teacher">טללית קונפורטי</div><div class="location">חדר אלקטרוניקה</div></div><div class="cell lesson"><div class="course">אמנויות הבמה</div><div class="teacher">חפץ שושי</div><div class="location">אודיטוריום</div></div><div class="cell lesson"><div class="course">פיתוח משחקים</div><div class="teacher">אריה סנה</div><div class="location">מחשבים חדר 2</div></div><div class="cell lesson"><div class="course">רובוטיקה מיקרוביט</div><div class="teacher">איציק חיים</div><div class="location">חדר טכנולוגיה</div></div><div class="cell lesson"><div class="course">רפואה בפעולה</div><div class="teacher">נתי מנצור</div><div class="location">מעבדה 2</div></div><div class="cell lesson"><div class="course">בינה מלאכותית</div><div class="teacher">קרן אולאברי</div><div class="location">חדר מחשבים 1</div></div><div class="cell lesson"><div class="course">בלשי ביולוגיה</div><div class="teacher">לינוי יעקב</div><div class="location">מעבדה 6</div></div><div class="cell lesson"><div class="course">רוקחים כימיה</div><div class="teacher">ענת אספורטס</div><div class="location">מעבדה 5</div></div><div class="cell hour recess-time" >11:05–11:15</div><div class="cell across recess" >הפסקה</div><div class="cell hour lesson-time" >11:15–12:15</div><div class="cell lesson"><div class="course">רובוטיקה מיקרוביט</div><div class="teacher">איציק חיים</div><div class="location">חדר טכנולוגיה</div></div><div class="cell lesson"><div class="course">יצירתיות פלוס</div><div class="teacher">טללית קונפורטי</div><div class="location">חדר אלקטרוניקה</div></div><div class="cell lesson"><div class="course">אמנויות הבמה</div><div class="teacher">חפץ שושי</div><div class="location">אודיטוריום</div></div><div class="cell lesson"><div class="course">פיתוח משחקים</div><div class="teacher">אריה סנה</div><div class="location">מחשבים חדר 2</div></div><div class="cell lesson"><div class="course">רוקחים כימיה</div><div class="teacher">ענת אספורטס</div><div class="location">מעבדה 5</div></div><div class="cell lesson"><div class="course">רפואה בפעולה</div><div class="teacher">נתי מנצור</div><div class="location">מעבדה 2</div></div><div class="cell lesson"><div class="course">בינה מלאכותית</div><div class="teacher">קרן אולאברי</div><div class="location">חדר מחשבים 1</div></div><div class="cell lesson"><div class="course">בלשי ביולוגיה</div><div class="teacher">לינוי יעקב</div><div class="location">מעבדה 6</div></div><div class="cell hour recess-time" >12:15–12:25</div><div class="cell across recess" >הפסקה</div><div class="cell hour lesson-time" >12:25–13:30</div><div class="cell lesson"><div class="course">פיתוח משחקים</div><div class="teacher">אריה סנה</div><div class="location">מחשבים חדר 2</div></div><div class="cell lesson"><div class="course">רובוטיקה מיקרוביט</div><div class="teacher">איציק חיים</div><div class="location">חדר טכנולוגיה</div></div><div class="cell lesson"><div class="course">יצירתיות פלוס</div><div class="teacher">טללית קונפורטי</div><div class="location">חדר אלקטרוניקה</div></div><div class="cell lesson"><div class="course">אמנויות הבמה</div><div class="teacher">חפץ שושי</div><div class="location">אודיטוריום</div></div><div class="cell lesson"><div class="course">בלשי ביולוגיה</div><div class="teacher">לינוי יעקב</div><div class="location">מעבדה 6</div></div><div class="cell lesson"><div class="course">רוקחים כימיה</div><div class="teacher">ענת אספורטס</div><div class="location">מעבדה 5</div></div><div class="cell lesson"><div class="course">רפואה בפעולה</div><div class="teacher">נתי מנצור</div><div class="location">מעבדה 2</div></div><div class="cell lesson"><div class="course">בינה מלאכותית</div><div class="teacher">קרן אולאברי</div><div class="location">חדר מחשבים 1</div></div>
+    </section>
+  </main>
 </body>
 </html>
