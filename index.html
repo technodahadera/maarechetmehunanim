@@ -3,112 +3,273 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>מערכת שעות מחוננים | טכנודע</title>
+  <meta name="color-scheme" content="light">
+  <title>מערכות שעות מחוננים | טכנודע</title>
+  <link rel="preconnect" href="https://view.genially.com">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
       color-scheme: light;
-      --ink: #3e3045;
-      --purple: #852f91;
-      --purple-strong: #6c2677;
-      --border: #e6ddec;
-      --soft: #f4ebf7;
-      --gap: clamp(3px, .48vw, 12px);
-      --page-pad: clamp(4px, .75vw, 18px);
+      --bg: #fbf9fc;
+      --ink: #45334e;
+      --purple: #792f8c;
+      --purple-dark: #60236f;
+      --lilac: #f1e5f5;
+      --border: #e5d9eb;
+      --status: #756a7b;
+      --space: clamp(4px, .7vmin, 12px);
     }
     * { box-sizing: border-box; }
-    html, body {
-      width: 100%; height: 100%; min-width: 0; min-height: 0; margin: 0;
-      overflow: hidden; background: #faf7fb; direction: rtl;
-      font-family: Rubik, Arial, "Noto Sans Hebrew", sans-serif;
-    }
+    html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; }
+    body { background: var(--bg); font-family: Rubik, Arial, sans-serif; color: var(--ink); }
+    button { font-family: inherit; cursor: pointer; }
     .app {
       display: grid;
-      grid-template-rows: minmax(0, 8.5%) minmax(0, 1fr);
+      grid-template-rows: auto minmax(0, 1fr);
       width: 100vw; height: 100vh; height: 100dvh;
-      padding: var(--page-pad); gap: var(--gap); overflow: hidden;
+      padding: var(--space); gap: var(--space); overflow: hidden;
     }
-    header {
-      display: flex; align-items: center; justify-content: center;
-      min-height: 0; padding: 0 6px; background: #f2eaf7;
-      border: 1px solid #e5d6eb; border-radius: clamp(5px, .8vw, 18px);
-      color: var(--purple-strong); text-align: center;
+    .toolbar {
+      display: flex;
+      flex-wrap: nowrap;
+      align-items: center;
+      gap: clamp(3px, .65vw, 16px);
+      min-width: 0;
+      min-height: clamp(34px, 7.1vh, 66px);
+      padding: clamp(3px, .42vh, 8px) clamp(6px, .75vw, 18px);
+      background: #f3eaf6;
+      border: 1px solid #e5d5eb;
+      border-radius: clamp(6px, 1vw, 17px);
     }
-    h1 {
-      margin: 0; font-size: clamp(11px, min(1.8vw, 3.8vh), 39px);
-      font-weight: 800; line-height: 1.15;
+    .brand {
+      flex: 0 0 auto;
+      color: var(--purple-dark);
+      font-weight: 800;
+      font-size: clamp(10px, min(1.23vw, 2.5vh), 25px);
+      line-height: 1.05;
+      white-space: nowrap;
     }
-    .timetable {
-      display: grid;
-      grid-template-columns: minmax(0, 9.5fr) repeat(8, minmax(0, 10fr));
-      grid-template-rows: .86fr .58fr 2.25fr .5fr 2.25fr .5fr 2.25fr .5fr 2.25fr;
-      gap: var(--gap);
-      width: 100%; height: 100%; min-width: 0; min-height: 0;
+    .tabs { display: flex; min-width: 0; flex: 1; justify-content: center; gap: clamp(2px, .5vw, 12px); }
+    .day {
+      flex: 1 1 0;
+      min-width: 0;
+      max-width: 185px;
+      border: 1px solid #d9c7e0;
+      border-radius: clamp(4px, .7vw, 12px);
+      background: #fff;
+      color: var(--purple-dark);
+      font-weight: 700;
+      white-space: nowrap;
+      font-size: clamp(10px, min(1.19vw, 2.4vh), 23px);
+      min-height: clamp(25px, 5.2vh, 45px);
+      padding: 2px 6px;
+      transition: background .15s ease, color .15s ease;
+    }
+    .day[aria-pressed="true"] { color: #fff; background: var(--purple); border-color: var(--purple); }
+    .day:focus-visible, .action:focus-visible, .group-btn:focus-visible { outline: 3px solid #b15fbd; outline-offset: 2px; }
+    .actions { display: flex; gap: 4px; align-items: center; flex: 0 0 auto; }
+    .action {
+      border: 1px solid #d9c7e0;
+      border-radius: 10px;
+      background: #fff;
+      color: var(--purple-dark);
+      font-size: clamp(14px, min(1.9vw, 3.5vh), 26px);
+      font-weight: 800;
+      width: clamp(27px, 3.2vw, 46px);
+      height: clamp(27px, 4.8vh, 43px);
+      display: inline-grid;
+      place-items: center;
+    }
+    .viewer { display: grid; grid-template-rows: auto minmax(0, 1fr); min-height: 0; min-width: 0; gap: clamp(2px, .35vh, 8px); }
+    .viewer-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      min-height: clamp(20px, 3.6vh, 40px);
+      padding-inline: clamp(2px, .5vw, 10px);
+    }
+    .viewer-title {
+      font-weight: 800;
+      color: var(--purple-dark);
+      font-size: clamp(10px, min(1.22vw, 2.3vh), 24px);
       overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
-    .cell {
-      min-width: 0; min-height: 0;
-      display: flex; justify-content: center; align-items: center;
-      text-align: center; overflow: hidden;
+    .head-right { display: flex; align-items: center; justify-content: flex-end; gap: clamp(4px, .7vw, 12px); flex: 0 0 auto; }
+    .status { font-size: clamp(8px, min(.75vw, 1.6vh), 15px); font-weight: 500; color: var(--status); white-space: nowrap; }
+    .friday-options { display: flex; gap: 4px; align-items: center; }
+    .friday-options[hidden] { display: none; }
+    .group-btn {
+      border-radius: 8px;
+      border: 1px solid #dcc9e2;
+      background: #fff;
+      color: var(--purple-dark);
+      padding: clamp(2px, .32vh, 5px) clamp(7px, .8vw, 15px);
+      font-size: clamp(9px, min(1vw, 2vh), 17px);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .group-btn[aria-pressed="true"] { background: var(--purple); color: #fff; }
+    .frame-box {
+      position: relative;
+      min-width: 0;
+      min-height: 0;
+      overflow: hidden;
       border: 1px solid var(--border);
-      border-radius: clamp(4px, .72vw, 18px);
+      border-radius: clamp(6px, 1vw, 16px);
+      background: #fff;
     }
-    .label {
-      background: #eaddef; color: var(--purple-strong);
-      font-weight: 800; font-size: clamp(10px, min(1.55vw, 3.2vh), 32px);
+    .frame-box iframe { width: 100%; height: 100%; display: block; border: 0; background: white; }
+    .loading {
+      pointer-events: none;
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--purple-dark); background: #fbf8fd;
+      font-weight: 700; font-size: clamp(13px, 1.5vw, 22px);
     }
-    .hour {
-      background: #f5f0f7; color: var(--purple-strong);
-      font-size: clamp(9px, min(1.08vw, 2.45vh), 24px);
-      font-weight: 800; white-space: nowrap;
-      font-variant-numeric: tabular-nums; direction: ltr; unicode-bidi: isolate;
-      letter-spacing: -.015em;
+    .loading[hidden] { display: none; }
+    .external {
+      color: var(--purple-dark);
+      font-size: clamp(9px, min(.85vw, 1.75vh), 15px);
+      font-weight: 600;
+      text-decoration: none;
+      white-space: nowrap;
     }
-    .across { grid-column: span 8; font-weight: 800; color: var(--purple); }
-    .social { background: #f0e8f4; font-size: clamp(10px, min(1.42vw, 2.9vh), 32px); }
-    .recess { background: #eae1f0; font-size: clamp(10px, min(1.35vw, 2.8vh), 30px); }
-    .lesson {
-      display: flex; flex-direction: column; justify-content: center;
-      gap: clamp(1px, .33vh, 7px);
-      padding: clamp(2px, .38vw, 11px) clamp(1px, .28vw, 8px);
-      background: white;
-      box-shadow: 0 1px 2px rgba(71,36,79,.07);
-      line-height: 1.13;
+    .external:hover { text-decoration: underline; }
+    @media (max-width: 740px) {
+      .toolbar { gap: 4px; }
+      .brand { font-size: clamp(9px, 1.55vw, 13px); }
+      .day { padding: 1px 3px; font-size: clamp(9px, 1.5vw, 13px); }
+      .status { display: none; }
+      .external { font-size: 10px; }
+      .viewer-title { font-size: clamp(9px, 1.6vw, 13px); }
     }
-    .course, .teacher, .location {
-      display: block; min-width: 0; max-width: 100%;
-      overflow-wrap: anywhere; word-break: normal;
-      text-wrap: balance;
-    }
-    .course {
-      font-size: clamp(9px, min(1.25vw, 2.65vh), 31px);
-      color: var(--purple-strong); font-weight: 800;
-    }
-    .teacher {
-      font-size: clamp(8px, min(.97vw, 2.08vh), 24px);
-      color: var(--ink); font-weight: 700;
-    }
-    .location {
-      font-size: clamp(8px, min(.88vw, 1.85vh), 22px);
-      color: #62576a; font-weight: 500;
-    }
-    @media (max-aspect-ratio: 5/4) {
-      h1 { font-size: clamp(10px, min(1.5vw, 3vh), 32px); }
-      .timetable { grid-template-columns: minmax(0, 8fr) repeat(8, minmax(0, 10fr)); }
-      .course { font-size: clamp(8px, min(1.25vw, 2.2vh), 31px); }
-      .teacher { font-size: clamp(8px, min(.98vw, 1.8vh), 24px); }
-      .location { font-size: clamp(7px, min(.88vw, 1.65vh), 22px); }
+    @media (max-width: 460px) {
+      .brand { max-width: 64px; white-space: normal; text-align: center; }
+      .external { display: none; }
     }
   </style>
 </head>
 <body>
-  <main class="app">
-    <header><h1>מערכת מחוננים יום ראשון - כיתות ה׳ - תשפ״ז - סמסטר א׳</h1></header>
-    <section class="timetable" aria-label="מערכת שעות ליום ראשון">
-      <div class="cell label hours-head">שעות</div><div class="cell label class-head" >ה׳1</div><div class="cell label class-head" >ה׳2</div><div class="cell label class-head" >ה׳3</div><div class="cell label class-head" >ה׳4</div><div class="cell label class-head" >ה׳5</div><div class="cell label class-head" >ה׳6</div><div class="cell label class-head" >ה׳7</div><div class="cell label class-head" >ה׳8</div><div class="cell hour social-time" >08:30–08:45</div><div class="cell across social" >פעילות חברתית - זמן מחנך</div><div class="cell hour lesson-time" >08:45–09:45</div><div class="cell lesson"><div class="course">אמנויות הבמה</div><div class="teacher">חפץ שושי</div><div class="location">אודיטוריום</div></div><div class="cell lesson"><div class="course">פיתוח משחקים</div><div class="teacher">אריה סנה</div><div class="location">מחשבים חדר 2</div></div><div class="cell lesson"><div class="course">רובוטיקה מיקרוביט</div><div class="teacher">איציק חיים</div><div class="location">חדר טכנולוגיה</div></div><div class="cell lesson"><div class="course">יצירתיות פלוס</div><div class="teacher">טללית קונפורטי</div><div class="location">חדר אלקטרוניקה</div></div><div class="cell lesson"><div class="course">בינה מלאכותית</div><div class="teacher">קרן אולאברי</div><div class="location">חדר מחשבים 1</div></div><div class="cell lesson"><div class="course">בלשי ביולוגיה</div><div class="teacher">לינוי יעקב</div><div class="location">מעבדה 6</div></div><div class="cell lesson"><div class="course">רוקחים כימיה</div><div class="teacher">ענת אספורטס</div><div class="location">מעבדה 5</div></div><div class="cell lesson"><div class="course">רפואה בפעולה</div><div class="teacher">נתי מנצור</div><div class="location">מעבדה 2</div></div><div class="cell hour recess-time" >09:45–10:05</div><div class="cell across recess" >הפסקה</div><div class="cell hour lesson-time" >10:05–11:05</div><div class="cell lesson"><div class="course">יצירתיות פלוס</div><div class="teacher">טללית קונפורטי</div><div class="location">חדר אלקטרוניקה</div></div><div class="cell lesson"><div class="course">אמנויות הבמה</div><div class="teacher">חפץ שושי</div><div class="location">אודיטוריום</div></div><div class="cell lesson"><div class="course">פיתוח משחקים</div><div class="teacher">אריה סנה</div><div class="location">מחשבים חדר 2</div></div><div class="cell lesson"><div class="course">רובוטיקה מיקרוביט</div><div class="teacher">איציק חיים</div><div class="location">חדר טכנולוגיה</div></div><div class="cell lesson"><div class="course">רפואה בפעולה</div><div class="teacher">נתי מנצור</div><div class="location">מעבדה 2</div></div><div class="cell lesson"><div class="course">בינה מלאכותית</div><div class="teacher">קרן אולאברי</div><div class="location">חדר מחשבים 1</div></div><div class="cell lesson"><div class="course">בלשי ביולוגיה</div><div class="teacher">לינוי יעקב</div><div class="location">מעבדה 6</div></div><div class="cell lesson"><div class="course">רוקחים כימיה</div><div class="teacher">ענת אספורטס</div><div class="location">מעבדה 5</div></div><div class="cell hour recess-time" >11:05–11:15</div><div class="cell across recess" >הפסקה</div><div class="cell hour lesson-time" >11:15–12:15</div><div class="cell lesson"><div class="course">רובוטיקה מיקרוביט</div><div class="teacher">איציק חיים</div><div class="location">חדר טכנולוגיה</div></div><div class="cell lesson"><div class="course">יצירתיות פלוס</div><div class="teacher">טללית קונפורטי</div><div class="location">חדר אלקטרוניקה</div></div><div class="cell lesson"><div class="course">אמנויות הבמה</div><div class="teacher">חפץ שושי</div><div class="location">אודיטוריום</div></div><div class="cell lesson"><div class="course">פיתוח משחקים</div><div class="teacher">אריה סנה</div><div class="location">מחשבים חדר 2</div></div><div class="cell lesson"><div class="course">רוקחים כימיה</div><div class="teacher">ענת אספורטס</div><div class="location">מעבדה 5</div></div><div class="cell lesson"><div class="course">רפואה בפעולה</div><div class="teacher">נתי מנצור</div><div class="location">מעבדה 2</div></div><div class="cell lesson"><div class="course">בינה מלאכותית</div><div class="teacher">קרן אולאברי</div><div class="location">חדר מחשבים 1</div></div><div class="cell lesson"><div class="course">בלשי ביולוגיה</div><div class="teacher">לינוי יעקב</div><div class="location">מעבדה 6</div></div><div class="cell hour recess-time" >12:15–12:25</div><div class="cell across recess" >הפסקה</div><div class="cell hour lesson-time" >12:25–13:30</div><div class="cell lesson"><div class="course">פיתוח משחקים</div><div class="teacher">אריה סנה</div><div class="location">מחשבים חדר 2</div></div><div class="cell lesson"><div class="course">רובוטיקה מיקרוביט</div><div class="teacher">איציק חיים</div><div class="location">חדר טכנולוגיה</div></div><div class="cell lesson"><div class="course">יצירתיות פלוס</div><div class="teacher">טללית קונפורטי</div><div class="location">חדר אלקטרוניקה</div></div><div class="cell lesson"><div class="course">אמנויות הבמה</div><div class="teacher">חפץ שושי</div><div class="location">אודיטוריום</div></div><div class="cell lesson"><div class="course">בלשי ביולוגיה</div><div class="teacher">לינוי יעקב</div><div class="location">מעבדה 6</div></div><div class="cell lesson"><div class="course">רוקחים כימיה</div><div class="teacher">ענת אספורטס</div><div class="location">מעבדה 5</div></div><div class="cell lesson"><div class="course">רפואה בפעולה</div><div class="teacher">נתי מנצור</div><div class="location">מעבדה 2</div></div><div class="cell lesson"><div class="course">בינה מלאכותית</div><div class="teacher">קרן אולאברי</div><div class="location">חדר מחשבים 1</div></div>
+  <main class="app" aria-label="מערכות שעות מחוננים טכנודע">
+    <header class="toolbar">
+      <div class="brand">טכנודע · מחוננים</div>
+      <nav class="tabs" aria-label="בחר יום">
+        <button class="day" data-day="sun" aria-pressed="true">ראשון</button>
+        <button class="day" data-day="mon" aria-pressed="false">שני</button>
+        <button class="day" data-day="tue" aria-pressed="false">שלישי</button>
+        <button class="day" data-day="fri" aria-pressed="false">שישי</button>
+      </nav>
+      <div class="actions">
+        <button id="refresh" class="action" aria-label="רענון מערכת השעות" title="רענון עכשיו">↻</button>
+      </div>
+    </header>
+
+    <section class="viewer" aria-label="תצוגת מערכת שעות חיה">
+      <div class="viewer-head">
+        <div id="title" class="viewer-title">יום ראשון · כיתות ה׳ · תשפ״ז</div>
+        <div class="head-right">
+          <div class="friday-options" id="fridayOptions" hidden aria-label="בחר שכבת גיל ביום שישי">
+            <button class="group-btn" data-group="six" aria-pressed="true">כיתות ו׳</button>
+            <button class="group-btn" data-group="middle" aria-pressed="false">חטיבת ביניים</button>
+          </div>
+          <span class="status" id="status" role="status">מתעדכן אוטומטית</span>
+          <a class="external" id="openSource" href="https://view.genially.com/5ffeafb75757e30fe1fb524f" target="_blank" rel="noopener noreferrer">פתח מקור ↗</a>
+        </div>
+      </div>
+      <div class="frame-box">
+        <iframe id="genially" title="מערכת שעות מעודכנת מ־Genially" allow="fullscreen; autoplay" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" loading="eager"></iframe>
+        <div id="loading" class="loading">טוען את מערכת השעות המעודכנת…</div>
+      </div>
     </section>
   </main>
+  <script>
+  (function () {
+    'use strict';
+    // מזהים שנמצאו במצגת ה-HTML שהמשתמש ייצא מ-Genially ב-11.10.2026.
+    // חשוב: המידע מוצג תמיד מכתובת Genially החיה, ולא מקובץ ה-ZIP.
+    const SOURCE = 'https://view.genially.com/5ffeafb75757e30fe1fb524f';
+    const SLIDES = Object.freeze({
+      sun: { id: '214166cd-e31e-4679-ab8d-6d1e013b39cc', title: 'יום ראשון · כיתות ה׳ · תשפ״ז' },
+      mon: { id: '587017c5-5b4e-4237-9e55-d3d2d936e59e', title: 'יום שני · כיתות ג׳ · תשפ״ז' },
+      tue: { id: 'c81ac3e3-ecd3-4304-a9e5-558d14e24314', title: 'יום שלישי · כיתות ד׳ · תשפ״ז' },
+      friSix: { id: 'df7816d8-f738-4739-9950-3d32d224a96c', title: 'יום שישי · כיתות ו׳ · תשפ״ז' },
+      friMiddle: { id: '0063dc74-ec56-4cff-a357-a8ce88ada7d6', title: 'יום שישי · חטיבת ביניים · תשפ״ז' }
+    });
+    const REFRESH_EVERY_MS = 5 * 60 * 1000;
+    const frame = document.getElementById('genially');
+    const title = document.getElementById('title');
+    const status = document.getElementById('status');
+    const loader = document.getElementById('loading');
+    const fridayOptions = document.getElementById('fridayOptions');
+    const link = document.getElementById('openSource');
+    const dayButtons = [...document.querySelectorAll('[data-day]')];
+    const groupButtons = [...document.querySelectorAll('[data-group]')];
+    const settings = { day: 'sun', fridayGroup: 'six', lastRefresh: 0 };
+
+    function slideKey() {
+      if (settings.day !== 'fri') return settings.day;
+      return settings.fridayGroup === 'middle' ? 'friMiddle' : 'friSix';
+    }
+
+    function urlFor(key, fresh) {
+      const url = new URL(SOURCE);
+      url.searchParams.set('idSlide', SLIDES[key].id);
+      // ערך מתחלף בכל רענון כדי לצמצם את הסיכון להצגת גרסה שמורה במטמון.
+      if (fresh) url.searchParams.set('v', String(Date.now()));
+      return url.toString();
+    }
+
+    function display(forceNewRequest) {
+      const key = slideKey();
+      title.textContent = SLIDES[key].title;
+      fridayOptions.hidden = settings.day !== 'fri';
+      dayButtons.forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.day === settings.day)));
+      groupButtons.forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.group === settings.fridayGroup)));
+      loader.hidden = false;
+      status.textContent = 'טוען נתונים מהמצגת החיה…';
+      const url = urlFor(key, forceNewRequest);
+      link.href = urlFor(key, false);
+      frame.src = url;
+      settings.lastRefresh = Date.now();
+    }
+
+    dayButtons.forEach((button) => button.addEventListener('click', () => {
+      const value = button.dataset.day;
+      if (value !== settings.day) { settings.day = value; display(false); }
+    }));
+    groupButtons.forEach((button) => button.addEventListener('click', () => {
+      const value = button.dataset.group;
+      if (value !== settings.fridayGroup) { settings.fridayGroup = value; display(false); }
+    }));
+    document.getElementById('refresh').addEventListener('click', () => display(true));
+    frame.addEventListener('load', () => {
+      loader.hidden = true;
+      status.textContent = 'מצגת חיה · רענון אוטומטי כל 5 דקות';
+    });
+    frame.addEventListener('error', () => {
+      loader.hidden = true;
+      status.textContent = 'בעיה בטעינה · אפשר לפתוח את המקור';
+    });
+
+    // כברירת מחדל מציגים את מערכת היום לפי שעון ישראל, אם קיימת מערכת לאותו יום.
+    try {
+      const dayName = new Intl.DateTimeFormat('en-US', { weekday: 'short', timeZone: 'Asia/Jerusalem' }).format(new Date());
+      const dayMap = { Sun: 'sun', Mon: 'mon', Tue: 'tue', Fri: 'fri' };
+      settings.day = dayMap[dayName] || 'sun';
+    } catch (err) { settings.day = 'sun'; }
+    display(false);
+    setInterval(() => {
+      if (!document.hidden && Date.now() - settings.lastRefresh >= REFRESH_EVERY_MS) display(true);
+    }, 30 * 1000);
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden && Date.now() - settings.lastRefresh >= REFRESH_EVERY_MS) display(true);
+    });
+  }());
+  </script>
 </body>
 </html>
