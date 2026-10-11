@@ -127,7 +127,17 @@
       position: absolute; inset-inline-start: 0; top: 0;
       width: 100%; height: 100%; display: block; border: 0;
       background: white;
+      /* Never alter iframe layout size: Genially scales itself to its viewport. */
+      transform-origin: 50% 50%;
+      transform: scale(var(--viewer-zoom, 1));
     }
+    /* Cover embedded Genially slide captions without resizing the embed frame. */
+    .edge-cover {
+      position: absolute; inset-inline: 0; pointer-events: none;
+      z-index: 2; background: #fff;
+    }
+    .edge-cover.top { top: 0; height: var(--top-cover, 0%); }
+    .edge-cover.bottom { bottom: 0; height: var(--bottom-cover, 8%); }
     /* After selecting a day, use 100% of the actual Genially embed window. */
     .app.focused { display: block; padding: 0; }
     .app.focused .toolbar, .app.focused .viewer-head { display: none; }
@@ -171,7 +181,7 @@
     .picker-groups[hidden] { display: none; }
     .picker-divider { height: 1px; background: #e8e0eb; margin: 13px 0 10px; }
     .crop-title { display: flex; justify-content: space-between; align-items: center; gap: 6px; color: var(--purple-dark); font-size: 12px; font-weight: 700; margin-bottom: 10px; }
-    .crop-control { display: grid; grid-template-columns: 80px minmax(0,1fr) 36px; gap: 6px; align-items: center; color: var(--ink); font-size: 12px; margin: 9px 0; }
+    .crop-control { display: grid; grid-template-columns: 100px minmax(0,1fr) 40px; gap: 6px; align-items: center; color: var(--ink); font-size: 12px; margin: 9px 0; }
     .crop-control input { accent-color: var(--purple); width: 100%; min-width: 0; }
     .crop-control output { text-align: left; direction: ltr; }
     .picker-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
@@ -238,6 +248,8 @@
       </div>
       <div class="frame-box">
         <iframe id="genially" title="מערכת שעות מעודכנת מ־Genially" allow="fullscreen; autoplay" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" loading="eager"></iframe>
+        <div class="edge-cover top" id="topCover" aria-hidden="true"></div>
+        <div class="edge-cover bottom" id="bottomCover" aria-hidden="true"></div>
         <div id="loading" class="loading">טוען את מערכת השעות המעודכנת…</div>
       </div>
     </section>
@@ -257,12 +269,13 @@
           <button type="button" data-pick-group="middle">חטיבת ביניים</button>
         </div>
         <div class="picker-divider"></div>
-        <div class="crop-title"><span>הסתר פס עליון או תחתון של המצגת</span><span>אופציונלי</span></div>
-        <label class="crop-control" for="cropTop"><span>מלמעלה</span><input id="cropTop" type="range" min="0" max="12" step="1" value="0"><output id="cropTopValue">0%</output></label>
-        <label class="crop-control" for="cropBottom"><span>מלמטה</span><input id="cropBottom" type="range" min="0" max="12" step="1" value="0"><output id="cropBottomValue">0%</output></label>
-        <p class="crop-tip">החיתוך מסתיר את שולי המצגת החיה. מומלץ להגדיל בהדרגה ולוודא שלא נחתך תוכן חשוב.</p>
+        <div class="crop-title"><span>הסתרה בלי להקטין את מערכת השעות</span><span>תצוגה נקייה</span></div>
+        <label class="crop-control" for="cropBottom"><span>כיסוי תחתון</span><input id="cropBottom" type="range" min="0" max="25" step="1" value="8"><output id="cropBottomValue">8%</output></label>
+        <label class="crop-control" for="cropTop"><span>כיסוי עליון</span><input id="cropTop" type="range" min="0" max="20" step="1" value="0"><output id="cropTopValue">0%</output></label>
+        <label class="crop-control" for="zoom"><span>הגדלה (רשות)</span><input id="zoom" type="range" min="100" max="120" step="1" value="100"><output id="zoomValue">100%</output></label>
+        <p class="crop-tip">הכיסוי הלבן מעלים את השורה התחתונה בלי להקטין את החלון או את התמונה. כוון את גובהו עד שהשורה נעלמת. הגדלה מעל 100% עשויה לחתוך חלק מהצדדים.</p>
         <div class="picker-actions">
-          <button type="button" class="picker-action" id="resetCrop">אפס חיתוך</button>
+          <button type="button" class="picker-action" id="resetCrop">אפס התאמות</button>
           <button type="button" class="picker-action" id="refreshCompact">↻ רענן</button>
           <button type="button" class="picker-action" id="showFullUI">הצג סרגלים</button>
         </div>
@@ -300,25 +313,35 @@
     const compactGroupButtons = [...document.querySelectorAll('[data-pick-group]')];
     const cropTop = document.getElementById('cropTop');
     const cropBottom = document.getElementById('cropBottom');
+    const zoom = document.getElementById('zoom');
+    const topCover = document.getElementById('topCover');
+    const bottomCover = document.getElementById('bottomCover');
     const settings = { day: 'sun', fridayGroup: 'six', lastRefresh: 0, focused: false };
 
-    // Try to remember optional cropping on this device; the embed still works if
-    // the browser blocks storage for third-party iframes.
+    // The bottom cover defaults to 8% to hide the "למידע לחצו על הקורסים" footer.
+    // Settings are optional; if embedded storage is blocked the controls still work.
     try {
-      const saved = JSON.parse(localStorage.getItem('technoda_schedule_crop_v1') || '{}');
-      if (Number.isFinite(saved.top) && saved.top >= 0 && saved.top <= 12) cropTop.value = saved.top;
-      if (Number.isFinite(saved.bottom) && saved.bottom >= 0 && saved.bottom <= 12) cropBottom.value = saved.bottom;
+      const saved = JSON.parse(localStorage.getItem('technoda_schedule_view_v2') || '{}');
+      if (Number.isFinite(saved.top) && saved.top >= 0 && saved.top <= 20) cropTop.value = saved.top;
+      if (Number.isFinite(saved.bottom) && saved.bottom >= 0 && saved.bottom <= 25) cropBottom.value = saved.bottom;
+      if (Number.isFinite(saved.zoom) && saved.zoom >= 100 && saved.zoom <= 120) zoom.value = saved.zoom;
     } catch (err) { /* no storage permission */ }
 
     function applyCrop() {
       const top = Number(cropTop.value) || 0;
       const bottom = Number(cropBottom.value) || 0;
-      // Visually crop an external Genially iframe without trying to alter its protected contents.
-      frame.style.top = `-${top}%`;
-      frame.style.height = `calc(100% + ${top + bottom}%)`;
+      const zoomPercent = Number(zoom.value) || 100;
+      // Important: keep iframe at exactly 100% width/height. Changing its height
+      // causes the cross-origin Genially viewer to resize its *entire* presentation.
+      frame.style.top = '0';
+      frame.style.height = '100%';
+      frame.style.transform = `scale(${zoomPercent / 100})`;
+      topCover.style.height = `${top}%`;
+      bottomCover.style.height = `${bottom}%`;
       document.getElementById('cropTopValue').value = `${top}%`;
       document.getElementById('cropBottomValue').value = `${bottom}%`;
-      try { localStorage.setItem('technoda_schedule_crop_v1', JSON.stringify({ top, bottom })); }
+      document.getElementById('zoomValue').value = `${zoomPercent}%`;
+      try { localStorage.setItem('technoda_schedule_view_v2', JSON.stringify({ top, bottom, zoom: zoomPercent })); }
       catch (err) { /* local storage may be restricted in an embed */ }
     }
 
@@ -396,8 +419,9 @@
     pickerButton.addEventListener('click', () => setPickerOpen(pickerPanel.hidden));
     cropTop.addEventListener('input', applyCrop);
     cropBottom.addEventListener('input', applyCrop);
+    zoom.addEventListener('input', applyCrop);
     document.getElementById('resetCrop').addEventListener('click', () => {
-      cropTop.value = '0'; cropBottom.value = '0'; applyCrop();
+      cropTop.value = '0'; cropBottom.value = '0'; zoom.value = '100'; applyCrop();
     });
     document.getElementById('refreshCompact').addEventListener('click', () => { display(true); setPickerOpen(false); });
     document.getElementById('showFullUI').addEventListener('click', exitFocus);
